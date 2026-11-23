@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Gregg Trail">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Gregg Trail</title>
+<style>
+:root{--bg:#f6f3ec;--fg:#23201b;--mut:#7a7367;--card:#fffdf8;--line:#ddd5c6;--acc:#2f5d8a;--ok:#2e8b57;--bad:#c0463a;--ink:#14213d;--ghost:#9ab3cc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171613;--fg:#efe9dc;--mut:#a39b8b;--card:#211f1b;--line:#38342c;--acc:#7fb0e0;--ok:#5fcf93;--bad:#ef7b6e;--ink:#e8eefc;--ghost:#4d6a88}}
+:root[data-theme="dark"]{--bg:#171613;--fg:#efe9dc;--mut:#a39b8b;--card:#211f1b;--line:#38342c;--acc:#7fb0e0;--ok:#5fcf93;--bad:#ef7b6e;--ink:#e8eefc;--ghost:#4d6a88}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:17px/1.45 -apple-system,system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+#app{max-width:820px;margin:0 auto;padding:16px}
+h1{font:700 28px Georgia,serif;margin:6px 0 2px}
+.mut{color:var(--mut)}.sm{font-size:14px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.sp{flex:1}
+button,select{font:600 17px inherit;font-family:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:12px 18px;border-radius:12px;min-height:46px}
+button.p{background:var(--acc);border-color:var(--acc);color:var(--bg)}button:disabled{opacity:.4}
+.les{width:100%;text-align:left;display:flex;gap:12px;align-items:center;margin:7px 0}
+.num{width:34px;height:34px;border-radius:50%;background:var(--acc);color:var(--bg);display:grid;place-items:center;flex:none}
+.lock{opacity:.55}.lock .num{background:var(--line)}
+.stage{position:relative;width:100%;aspect-ratio:15/8;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:12px 0}
+.stage svg,.stage canvas,.stage img{position:absolute;inset:0;width:100%;height:100%}.stage img{object-fit:contain;opacity:.55}
+canvas{touch-action:none}
+.bar{flex:1;height:8px;background:var(--line);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok)}
+.tag{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--acc)}
+.big{font:700 40px Georgia,serif}.tip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0}
+.stars{font-size:26px;letter-spacing:3px;color:#e0a526}
+.opt{flex:1 1 45%;font-size:26px;font-family:Georgia,serif}.opt.ok{background:var(--ok);color:var(--bg)}.opt.no{background:var(--bad);color:var(--bg)}
+.draw{animation:d 2.2s ease-out forwards}@keyframes d{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+textarea{width:100%;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:8px;margin:8px 0;font:13px monospace;-webkit-user-select:text;user-select:text}
+a{color:var(--acc)}
+</style></head><body><div id="app"></div>
+<svg style="position:absolute;width:0;height:0"><path id="meas"/></svg>
+<script>
+/* ---------- shape data ----------
+ Draft shapes are built from the Anniversary manual's *descriptions*. Real plate-traced shapes (made in Trace Studio, or shipped as shapes.json)
+ override them item by item. */
+const V={n:[70,0],m:[160,0],t:[70,-45],d:[150,-85]},C={k:[70,1,.62],g:[130,1,.62],r:[70,0,.38],l:[130,0,.38]},R={e:17,a:34};
+function build(tk){
+  const run=(x,y)=>{let d=`M${x} ${y}`,dv='',a=[x,x,y,y];const bx=(X,Y)=>{a=[Math.min(a[0],X),Math.max(a[1],X),Math.min(a[2],Y),Math.max(a[3],Y)]};
+    for(const k of tk){
+      if(R[k]){const r=R[k],s=`A${r} ${r} 0 1 0 ${x} ${y-2*r} A${r} ${r} 0 1 0 ${x} ${y}`;d+=' '+s;dv+=`M${x} ${y}${s}`;bx(x-r,y-2*r);bx(x+r,y)}
+      else if(C[k]){const[w,u,p]=C[k],s=u?-1:1,x0=x;d+=` Q${x+w*p} ${y+s*w*.6} ${x+w} ${y}`;x+=w;bx(x0,y+s*w*.3);bx(x,y)}
+      else{x+=V[k][0];y+=V[k][1];d+=` L${x} ${y}`;bx(x,y)}}
+    return{d,dv,a}};
+  const f=run(0,0).a,o=run(300-(f[0]+f[1])/2,170-(f[2]+f[3])/2);return{d:o.d,dv:o.dv}}
+const I={};const S=(id,tk,snd,tip,kind)=>I[id]={id,name:id,tk,snd,tip,kind:kind||'sym',...build(tk)};
+S('a',['a'],'“ay” as in day','The big circle. About twice the size of e.');
+S('e',['e'],'“ee” as in me','The small circle. Keep it tiny and neat.');
+S('n',['n'],'“n” as in no','A short, flat line written left to right.');
+S('m',['m'],'“m” as in me','The same flat line, about twice as long as n.');
+S('t',['t'],'“t” as in tea','A short line sloping up to the right.');
+S('d',['d'],'“d” as in day','The same slope as t, about twice as long.');
+[['me','m·e','Line, then circle on it.'],['tea','t·e','Slope up, then the small circle.'],['day','d·ay','Long slope, then the big circle.'],['need','n·ee·d','Short line, circle, long slope.'],['date','d·ay·t','Long slope, big circle, short slope.']].forEach(w=>S(w[0],w[0]=='me'?['m','e']:w[0]=='tea'?['t','e']:w[0]=='day'?['d','a']:w[0]=='need'?['n','e','d']:['d','a','t'],w[1],w[2],'word'));
+S('k',['k'],'“k” as in key','Shallow arch resting on the line. The deep part is at the end.');
+S('g',['g'],'“g” as in go','Same as k but about twice as long.');
+S('r',['r'],'“r” as in ray','Like k upside down: a saucer on the line. Deep part at the start.');
+S('l',['l'],'“l” as in lay','Same as r, about twice as long.');
+const SES=[{t:'Circles',new:['a','e']},{t:'Straight lines',new:['n','m']},{t:'Slopes',new:['t','d']},{t:'First words',new:['me','tea','day']},
+{t:'More words + round trip',new:['need','date'],rt:1},{t:'Curves',new:['k','g','r','l']}];
+let OVR={};const ld=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+OVR=ld('gt2o',{});let P=ld('gt2',{i:{},d:{}});const save=()=>sv('gt2',P);
+fetch('shapes.json').then(r=>r.ok?r.json():{}).then(j=>{OVR={...j,...ld('gt2o',{})}}).catch(()=>{});
+const D=it=>(OVR[it.id]||it).d,mix=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+/* ---------- spaced repetition (Leitner boxes, 0–5) ---------- */
+const IV=[0,1,3,7,16,35].map(d=>d*864e5);
+function upd(id,ok,h){const r=P.i[id]||(P.i[id]={box:0,due:0});if(ok&&!h)r.box=Math.min(5,r.box+1);else if(!ok)r.box=Math.max(0,r.box-1);r.due=Date.now()+(r.box?IV[r.box]:36e5);save()}
+const learned=()=>Object.keys(P.i),dueIds=()=>learned().filter(x=>P.i[x].due<=Date.now()).sort((a,b)=>P.i[a].due-P.i[b].due);
+const A=document.getElementById('app');let Q=[],qi=0,se={},strokes=[],cv,cx,pen=false,cur=null,hint=0,locked=0;
+
+/* ---------- map ---------- */
+const open=i=>i==0||P.d[i-1]||P._all;
+function map(){const nd=[[80,400],[250,360],[120,305],[240,255],[150,200],[195,150]],dn=dueIds().length;
+  A.innerHTML=`<h1>Gregg Trail</h1><div class="mut">Every lesson introduces new shapes and brings back old ones.</div>
+  <svg viewBox="0 0 360 440" style="width:100%;max-height:42vh;display:block;margin:6px auto"><polygon points="20,430 200,60 340,430" fill="var(--line)"/>
+  <polyline points="${nd.map(n=>n.join(',')).join(' ')} 200,105" fill="none" stroke="var(--mut)" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
+  ${nd.map((n,i)=>`<g onclick="go(${i})"><circle cx="${n[0]}" cy="${n[1]}" r="19" fill="${P.d[i]?'var(--ok)':open(i)?'var(--acc)':'var(--bg)'}" stroke="var(--mut)"/><text x="${n[0]}" y="${n[1]+6}" text-anchor="middle" font-size="17" font-weight="700" fill="${open(i)?'var(--bg)':'var(--mut)'}">${i+1}</text></g>`).join('')}
+  <path d="M200 105V60" stroke="var(--fg)" stroke-width="3"/><path d="M200 60l24 8-24 8z" fill="var(--acc)"/></svg>
+  <button class="p les" onclick="review()" ${learned().length?'':'disabled'}><span class="sp">Daily review<br><span class="sm">${learned().length?dn+' due now · '+learned().length+' shapes learned':'Finish lesson 1 to unlock'}</span></span></button>
+  ${SES.map((s,i)=>`<button class="les ${open(i)?'':'lock'}" onclick="go(${i})"><span class="num">${open(i)?i+1:'🔒'}</span><span class="sp"><b>${s.t}</b><br><span class="mut sm">New: ${s.new.join(', ')}${P.d[i]?' · done':''}</span></span></button>`).join('')}
+  <p class="mut sm"><a href="#" onclick="studio();return false">Trace Studio</a> (build real shapes from manual plates) · <a href="#" onclick="P._all=1;save();map();return false">unlock all</a> · <a href="#" onclick="if(confirm('Reset all progress?')){P={i:{},d:{}};save();map()}return false">reset</a></p>
+  <p class="mut sm">Shapes are drafts until replaced in Trace Studio (${Object.keys(OVR).length}/${Object.keys(I).length} replaced).</p>`}
+/* ---------- sessions ---------- */
+function pool(si){return learned().filter(x=>!SES[si].new.includes(x))}
+function go(si){if(!open(si))return;const s=SES[si],q=[],old=mix(pool(si)).sort((a,b)=>P.i[a].due-P.i[b].due).slice(0,6);
+  s.new.forEach(id=>q.push({k:'L',id},{k:'W',id}));s.new.forEach(id=>q.push({k:'R',id}));
+  mix(old).forEach(id=>q.push({k:Math.random()<.5?'R':'W',id}));
+  s.new.forEach(id=>q.push({k:'W',id,late:1}));
+  if(s.rt){const ids=mix([...s.new,...old.filter(x=>I[x].kind=='word')]).slice(0,4);ids.forEach(id=>q.push({k:'TW',id}));mix(ids).forEach(id=>q.push({k:'TR',id}))}
+  run(q,si)}
+function review(){const ids=dueIds().slice(0,10);const extra=mix(learned().filter(x=>!ids.includes(x))).slice(0,Math.max(0,5-ids.length));
+  run(mix([...ids,...extra]).map(id=>({k:Math.random()<.5?'R':'W',id})),null)}
+function run(q,si){Q=q;qi=0;se={si,img:{}};card()}
+const LBL={L:'Learn · trace it',W:'Write it from memory',R:'Read it',TW:'Round trip · write',TR:'Round trip · read your own writing'};
+function card(){if(qi>=Q.length)return fin();const c=Q[qi],it=I[c.id];locked=0;hint=0;
+  const hd=`<div class="row"><button onclick="map()">✕</button><div class="bar"><i style="width:${qi/Q.length*100}%"></i></div></div><div class="tag" style="margin-top:10px">${LBL[c.k]}</div>`;
+  if(c.k=='R'||c.k=='TR'){const pl=c.k=='TR'?'':'',ds=mix([...new Set([...learned(),...(se.si!=null?SES[se.si].new:[])])].filter(x=>x!=c.id&&I[x].kind==it.kind)).slice(0,3),os=mix([c.id,...ds]);
+    A.innerHTML=hd+`<div class="stage">${c.k=='TR'?`<img src="${se.img[c.id]}" style="opacity:1">`:`<svg viewBox="0 0 600 320"><path d="${D(it)}" fill="none" stroke="var(--fg)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`}</div>
+    <div class="row">${os.map(o=>`<button class="opt" onclick="pick(this,'${o}')">${o}</button>`).join('')}</div><div id="msg"></div><div class="row" id="ctl"></div>`;return}
+  const l=c.k=='L';
+  A.innerHTML=hd+`<div class="row"><span class="big">${it.name}</span><span class="mut">${it.snd}</span></div>
+  <div class="stage"><svg viewBox="0 0 600 320"><line x1="30" x2="570" y1="190" y2="190" stroke="var(--line)" stroke-dasharray="4 6"/><g id="gg">
+  <path id="gh" d="${D(it)}" fill="none" stroke="var(--ghost)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" opacity="${l?.4:0}"/>
+  <path id="gv" d="${it.dv||''}" fill="none" stroke="var(--acc)" stroke-width="4" opacity="0"/>
+  ${l?`<path id="an" class="draw" pathLength="1" stroke-dasharray="1" d="${D(it)}" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`:''}
+  <path id="tg" d="${D(it)}" fill="none" stroke="var(--ok)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>
+  <circle id="s0" r="9" fill="var(--ok)" opacity="${l?1:0}"/><circle id="s1" r="9" fill="var(--bad)" opacity="0"/></g></svg><canvas id="cv"></canvas></div>
+  <div id="msg"><div class="tip">${l?it.tip+'<br><span class="mut sm">Just start tracing with your Pencil. The animation will stop.'+(OVR[it.id]?'':' · draft shape')+'</span>':c.k=='TW'?'Write it, then tap Next. You’ll read these back later.':'Draw it on the blank page. Use hints if you’re stuck.'}</div></div><div class="row" id="ctl"></div>`;
+  const m=document.getElementById('meas');m.setAttribute('d',D(it));const L=m.getTotalLength(),a=m.getPointAtLength(0),b=m.getPointAtLength(L);
+  s0.setAttribute('cx',a.x);s0.setAttribute('cy',a.y);s1.setAttribute('cx',b.x);s1.setAttribute('cy',b.y);
+  pad(l?()=>{const x=document.getElementById('an');x&&x.remove()}:null);
+  document.getElementById('ctl').innerHTML=`<button onclick="undo()">Undo</button><button onclick="clr()">Clear</button>${l?'<button onclick="replay()">↻ Replay</button>':c.k=='W'?'<button id="hb" onclick="hnt()">Hint 0/3</button>':''}<div class="sp"></div>`+
+   (l?'<button class="p" onclick="adv()">Got it →</button>':c.k=='TW'?'<button class="p" onclick="twDone()">Next →</button>':'<button class="p" onclick="check()">Check</button>')}
+function adv(){qi++;card()}
+function replay(){const it=I[Q[qi].id];if(document.getElementById('an'))return;document.getElementById('gg').insertAdjacentHTML('afterbegin',`<path id="an" class="draw" pathLength="1" stroke-dasharray="1" d="${D(it)}" fill="none" stroke="var(--acc)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`);pad0()}
+function hnt(){if(locked)return;hint=Math.min(3,hint+1);const it=I[Q[qi].id];
+  gh.setAttribute('opacity',hint==3?.4:(hint==2&&OVR[it.id])?.12:0);gv.setAttribute('opacity',hint==2&&!OVR[it.id]?.9:0);
+  s0.setAttribute('opacity',1);s1.setAttribute('opacity',hint>=1?1:0);
+  hb.textContent='Hint '+hint+'/3';document.getElementById('msg').innerHTML=`<div class="tip">${['','Green is where you start, red is where you finish.','Vowel circles shown in blue.','Full shape shown. Trace it.'][hint]}</div>`;}
+/* ---------- ink ---------- */
+function pad(first){strokes=[];cv=document.getElementById('cv');cx=cv.getContext('2d');rs();pad0(first)}
+function pad0(first){cv.onpointerdown=e=>{if(e.pointerType=='pen')pen=true;if(e.pointerType=='touch'&&pen||locked)return;if(first){first();first=null}
+  cv.setPointerCapture(e.pointerId);cur=[];strokes.push(cur);add(e);e.preventDefault()};
+  cv.onpointermove=e=>{if(!cur)return;(e.getCoalescedEvents?e.getCoalescedEvents():[e]).forEach(add);e.preventDefault()};
+  cv.onpointerup=cv.onpointercancel=()=>{cur=null};cv.oncontextmenu=e=>e.preventDefault()}
+function rs(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;redraw()}
+function add(e){const r=cv.getBoundingClientRect(),p={x:(e.clientX-r.left)*600/r.width,y:(e.clientY-r.top)*600/r.width,p:e.pressure||.5};cur.push(p);seg(cur[cur.length-2]||p,p)}
+function seg(a,b){const k=cv.width/600;cx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--ink');cx.lineCap='round';cx.lineWidth=(2.5+b.p*3.5)*k;cx.beginPath();cx.moveTo(a.x*k,a.y*k);cx.lineTo(b.x*k,b.y*k);cx.stroke()}
+function redraw(){cx.clearRect(0,0,cv.width,cv.height);strokes.forEach(s=>s.forEach((p,i)=>seg(s[i-1]||p,p)))}
+function undo(){if(!locked){strokes.pop();redraw()}}function clr(){if(!locked){strokes=[];redraw()}}
+addEventListener('resize',()=>{if(cv&&document.body.contains(cv))rs()});
+/* ---------- scoring ---------- */
+function score(it){const up=strokes.flat();if(up.length<5)return null;const m=document.getElementById('meas');m.setAttribute('d',D(it));const len=m.getTotalLength(),tp=[];
+  for(let k=0;k<len;k+=4){const q=m.getPointAtLength(k);tp.push([q.x,q.y])}
+  const u=[];let lx=-99,ly=-99;up.forEach(p=>{if(Math.hypot(p.x-lx,p.y-ly)>3){u.push([p.x,p.y]);lx=p.x;ly=p.y}});
+  const bb=a=>{const x=a.map(p=>p[0]),y=a.map(p=>p[1]);return[(Math.min(...x)+Math.max(...x))/2,(Math.min(...y)+Math.max(...y))/2]};
+  const bt=bb(tp),bu=bb(u),dx=bu[0]-bt[0],dy=bu[1]-bt[1],tt=tp.map(p=>[p[0]+dx,p[1]+dy]);
+  const nd=(p,a)=>{let b=1e9;for(const q of a){const d=Math.hypot(p[0]-q[0],p[1]-q[1]);if(d<b)b=d}return b};
+  const d1=tt.reduce((s,p)=>s+nd(p,u),0)/tt.length,d2=u.reduce((s,p)=>s+nd(p,tt),0)/u.length;
+  return{sc:Math.round(100*Math.max(0,1-((d1+d2)/2)/26)),dx,dy}}
+function check(){const c=Q[qi],it=I[c.id],r=score(it);if(!r){document.getElementById('msg').innerHTML='<div class="tip">Draw something first, then tap Check.</div>';return}
+  locked=1;const ok=r.sc>=60,st=r.sc>=80?3:r.sc>=60?2:r.sc>=40?1:0;upd(c.id,ok,hint);
+  gh.setAttribute('opacity',0);gv.setAttribute('opacity',0);s0.setAttribute('opacity',0);s1.setAttribute('opacity',0);tg.setAttribute('opacity',.85);document.getElementById('gg').setAttribute('transform',`translate(${r.dx} ${r.dy})`);
+  if(!ok&&!c.retry)Q.push({...c,retry:1});
+  document.getElementById('msg').innerHTML=`<div class="tip"><span class="stars">${'★'.repeat(st)}<span style="opacity:.25">${'★'.repeat(3-st)}</span></span> <b>${r.sc}%</b><br>${ok?(hint?'Good. Hints were used, so this one will come back sooner.':'Locked in. It will return later for recall.'):'Not yet. You’ll see this one again shortly.'}<br><span class="mut sm">Green is the model, shifted to sit on your ink.</span></div>`;
+  document.getElementById('ctl').innerHTML='<div class="sp"></div><button class="p" onclick="adv()">Next →</button>'}
+function twDone(){const c=Q[qi];if(strokes.flat().length<5){document.getElementById('msg').innerHTML='<div class="tip">Write the word first.</div>';return}se.img[c.id]=cv.toDataURL();adv()}
+function pick(b,o){const c=Q[qi];if(locked)return;locked=1;const ok=o==c.id;if(c.k=='R')upd(c.id,ok,0);else if(!ok){}
+  document.querySelectorAll('.opt').forEach(x=>{if(x.textContent==c.id)x.classList.add('ok')});if(!ok)b.classList.add('no');
+  if(c.k=='TR'&&!ok){document.getElementById('msg').innerHTML=`<div class="tip">That was “${c.id}”. Compare with the model: <svg viewBox="0 0 600 320" style="width:100%;max-height:120px"><path d="${D(I[c.id])}" fill="none" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/></svg></div>`}
+  else document.getElementById('msg').innerHTML=`<div class="tip">${ok?'Correct.':'It was “'+c.id+'”. It will come back soon.'}</div>`;
+  if(!ok&&c.k=='R'&&!c.retry)Q.push({...c,retry:1});
+  document.getElementById('ctl').innerHTML='<div class="sp"></div><button class="p" onclick="adv()">Next →</button>'}
+function fin(){if(se.si!=null){P.d[se.si]=1;save()}const ids=[...new Set(Q.map(c=>c.id))];
+  A.innerHTML=`<h1>Session complete 🏔️</h1><p class="mut">Shapes you worked on:</p><div class="row">${ids.map(x=>`<div class="tip" style="text-align:center;min-width:90px"><div class="big">${x}</div><span class="mut sm">box ${P.i[x]?P.i[x].box:0}/5</span></div>`).join('')}</div><button class="p" onclick="map()">Back to the trail →</button>`}
+/* ---------- Trace Studio: author shapes from reference plates ---------- */
+function studio(){A.innerHTML=`<div class="row"><button onclick="map()">← Map</button><b>Trace Studio</b></div>
+  <p class="mut sm">Open a plate from the Anniversary manual (e.g. screenshot from greggshorthand.github.io), load it here, then trace one shape. Keep the zoom identical for every shape so sizes stay in proportion.</p>
+  <div class="row"><select id="sel">${Object.values(I).map(i=>`<option value="${i.id}">${i.id}${OVR[i.id]?' ✓':''}</option>`).join('')}</select><input type="file" id="fi" accept="image/*"></div>
+  <div class="stage"><img id="ref" alt=""><canvas id="cv"></canvas></div>
+  <div class="row"><button onclick="undo()">Undo</button><button onclick="clr()">Clear</button><button onclick="delS()">Remove override</button><div class="sp"></div><button class="p" onclick="saveS()">Save shape</button></div>
+  <textarea id="ex" rows="4" placeholder="Export / import shapes.json here"></textarea><div class="row"><button onclick="ex.value=JSON.stringify(OVR);ex.select()">Export</button><button onclick="try{OVR={...OVR,...JSON.parse(ex.value)};sv('gt2o',OVR);alert('Imported')}catch(e){alert('Invalid JSON')}">Import</button></div>
+  <p class="mut sm">Commit the exported JSON as <code>shapes.json</code> next to index.html on GitHub and everyone gets the real shapes.</p>`;
+  locked=0;pad(null);fi.onchange=()=>{const f=fi.files[0];if(f){const r=new FileReader();r.onload=()=>ref.src=r.result;r.readAsDataURL(f)}}}
+function saveS(){const pts=strokes.flat();if(pts.length<5)return alert('Trace a shape first');const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y),ox=300-(Math.min(...xs)+Math.max(...xs))/2,oy=170-(Math.min(...ys)+Math.max(...ys))/2;
+  const d=strokes.map(s=>{let o=[],l=null;s.forEach(p=>{if(!l||Math.hypot(p.x-l.x,p.y-l.y)>4){o.push(p);l=p}});return o.map((p,i)=>(i?'L':'M')+(p.x+ox).toFixed(1)+' '+(p.y+oy).toFixed(1)).join(' ')}).join(' ');
+  OVR[sel.value]={d};sv('gt2o',OVR);strokes=[];redraw();alert('Saved '+sel.value)}
+function delS(){delete OVR[sel.value];sv('gt2o',OVR);alert('Removed')}
+map();
+</script></body></html>
