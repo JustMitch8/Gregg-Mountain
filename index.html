@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Gregg Trail">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Gregg Mountain">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Gregg Trail</title>
+<title>Gregg Mountain</title>
 <style>
 :root{--bg:#f6f3ec;--fg:#23201b;--mut:#7a7367;--card:#fffdf8;--line:#ddd5c6;--acc:#2f5d8a;--ok:#2e8b57;--bad:#c0463a;--ink:#14213d;--ghost:#9ab3cc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171613;--fg:#efe9dc;--mut:#a39b8b;--card:#211f1b;--line:#38342c;--acc:#7fb0e0;--ok:#5fcf93;--bad:#ef7b6e;--ink:#e8eefc;--ghost:#4d6a88}}
@@ -35,7 +35,7 @@ a{color:var(--acc)}
 /* ---------- shape data ----------
  Draft shapes are built from the Anniversary manual's *descriptions*. Real plate-traced shapes (made in Trace Studio, or shipped as shapes.json)
  override them item by item. */
-const V={n:[70,0],m:[160,0],t:[70,-45],d:[150,-85]},C={k:[70,1,.62],g:[130,1,.62],r:[70,0,.38],l:[130,0,.38]},R={e:17,a:34};
+const V={n:[58,-3],m:[211,-10],t:[78,-39],d:[213,-110]},C={k:[70,1,.62],g:[130,1,.62],r:[70,0,.38],l:[130,0,.38]},R={e:13,a:43};
 function build(tk){
   const run=(x,y)=>{let d=`M${x} ${y}`,dv='',a=[x,x,y,y];const bx=(X,Y)=>{a=[Math.min(a[0],X),Math.max(a[1],X),Math.min(a[2],Y),Math.max(a[3],Y)]};
     for(const k of tk){
@@ -56,11 +56,23 @@ S('k',['k'],'“k” as in key','Shallow arch resting on the line. The deep part
 S('g',['g'],'“g” as in go','Same as k but about twice as long.');
 S('r',['r'],'“r” as in ray','Like k upside down: a saucer on the line. Deep part at the start.');
 S('l',['l'],'“l” as in lay','Same as r, about twice as long.');
-const SES=[{t:'Circles',new:['a','e']},{t:'Straight lines',new:['n','m']},{t:'Slopes',new:['t','d']},{t:'First words',new:['me','tea','day']},
-{t:'More words + round trip',new:['need','date'],rt:1},{t:'Curves',new:['k','g','r','l']}];
+const S2=(id,name,snd,tip)=>I[id]={id,name,tk:[],snd,tip,kind:'sym',d:'M0 0',dv:''};
+S2('th','th','“th” as in thin','The t curved and kept small. Deep at the start, flattening toward the end.');
+S2('th2','th (2nd form)','“th” again','The second th form on the chart. It swings upward from the right.');
+S2('ch','ch','“ch” as in chair','A straight downstroke, named “chay”. Written from the top down.');
+S2('j','j','“j” as in jam','Same slant as ch but about twice as long.');
+S2('sh','sh','“sh” as in ship','A short downstroke, named “ish”.');
+S2('p','p','“p” as in pay','A curve written downward. Shorter than b.');
+S2('b','b','“b” as in bay','The longer curve of the p family, written downward.');
+S2('f','f','“f” as in fee','A curve written downward, bending right at the top. Shorter than v.');
+S2('v','v','“v” as in view','The longer sibling of f, written downward.');
+S2('ls','left s','“s” as in say','The left-motion s: a tiny curve written downward.');
+S2('rs','right s','“s” again','The right-motion s, the “comma s”: a tiny curve written downward.');
+S2('o','o','“o” as in hot','A small hook, like a tiny cup.');
+const BUILTIN={"k":{"d":"M222.8 184.4 C227.0 182.5 239.2 176.4 247.7 173.0 C256.1 169.6 264.7 166.3 273.5 164.2 C282.4 162.0 291.6 161.6 300.6 160.1 C309.6 158.7 318.5 156.4 327.5 155.7 C336.6 154.9 346.6 153.2 354.9 155.6 C363.1 157.9 373.5 167.4 377.2 169.8"},"g":{"d":"M135.9 199.2 C142.1 196.4 160.5 186.7 173.5 182.2 C186.4 177.7 200.3 175.6 213.6 172.2 C227.0 168.8 240.3 165.2 253.6 161.8 C267.0 158.3 280.3 154.4 293.8 151.8 C307.3 149.1 321.1 147.6 334.7 145.8 C348.4 144.0 362.0 141.1 375.7 140.8 C389.4 140.4 403.6 140.8 416.8 143.7 C430.1 146.5 447.3 149.6 455.2 158.1 C463.1 166.5 462.6 188.3 464.1 194.4"},"r":{"d":"M223.6 157.9 C226.8 161.1 235.0 172.7 242.6 176.7 C250.2 180.7 260.3 181.5 269.2 182.1 C278.2 182.6 287.3 181.0 296.3 180.2 C305.4 179.3 314.5 178.7 323.4 177.1 C332.3 175.5 341.0 172.8 349.9 170.7 C358.7 168.6 372.0 165.5 376.4 164.4"},"l":{"d":"M189.5 149.1 C190.9 153.2 192.5 167.6 197.9 173.7 C203.3 179.9 213.4 183.5 221.9 186.2 C230.4 188.8 239.9 188.7 249.0 189.5 C258.0 190.3 267.1 191.1 276.2 190.9 C285.2 190.7 294.3 189.2 303.4 188.3 C312.4 187.4 321.5 186.8 330.5 185.5 C339.5 184.3 348.4 182.2 357.4 180.6 C366.4 179.1 375.5 178.3 384.3 176.3 C393.2 174.3 406.1 169.9 410.5 168.6"},"n":{"d":"M270.8 172.2 C274.0 171.7 283.6 170.3 290.1 169.5 C296.6 168.8 303.2 167.9 309.7 167.8 C316.2 167.7 326.0 168.7 329.2 168.9"},"m":{"d":"M194.4 174.9 L405.6 165.1"},"t":{"d":"M261.0 189.5 L339.0 150.5"},"d":{"d":"M193.6 225.2 C197.4 223.1 209.0 216.3 216.7 212.1 C224.5 207.8 232.5 203.7 240.3 199.6 C248.2 195.5 256.1 191.5 264.1 187.4 C272.0 183.3 279.9 179.3 287.8 175.2 C295.7 171.1 303.4 166.7 311.4 162.7 C319.3 158.8 327.4 155.1 335.5 151.4 C343.6 147.8 352.0 144.8 360.1 141.0 C368.1 137.2 376.0 133.1 383.7 128.7 C391.4 124.3 402.6 117.1 406.4 114.8"},"th":{"d":"M259.4 196.0 C263.1 192.0 273.5 179.1 281.8 172.2 C290.1 165.2 299.6 159.0 309.4 154.3 C319.2 149.6 335.4 145.7 340.6 144.0"},"th2":{"d":"M264.2 197.6 C269.1 195.9 284.6 192.4 293.5 187.5 C302.4 182.5 310.7 175.4 317.7 167.8 C324.7 160.3 332.7 146.6 335.8 142.4"},"p":{"d":"M352.0 106.6 C348.2 108.3 336.1 112.6 328.8 116.8 C321.6 120.9 314.9 126.2 308.4 131.6 C302.0 137.1 296.1 143.2 290.2 149.2 C284.3 155.3 278.4 161.4 273.0 167.9 C267.6 174.4 261.9 180.9 257.7 188.1 C253.5 195.3 248.0 203.7 248.0 211.2 C248.0 218.8 256.1 229.7 257.8 233.4"},"b":{"d":"M408.7 59.5 C403.1 62.0 385.8 68.9 374.7 74.2 C363.5 79.6 352.5 85.3 341.9 91.6 C331.3 98.0 321.2 105.2 311.1 112.3 C301.0 119.4 291.1 126.8 281.2 134.3 C271.4 141.9 261.3 149.1 252.2 157.4 C243.0 165.7 234.4 174.7 226.4 184.1 C218.5 193.5 210.2 203.3 204.3 213.9 C198.4 224.6 191.0 237.1 191.3 248.2 C191.5 259.2 203.2 275.1 205.6 280.5"},"f":{"d":"M338.3 102.6 C341.5 104.3 355.5 107.2 357.5 112.9 C359.6 118.5 354.2 129.1 350.8 136.6 C347.4 144.0 342.1 150.8 337.3 157.6 C332.6 164.5 327.8 171.4 322.3 177.6 C316.8 183.8 310.7 189.6 304.3 194.9 C297.9 200.2 290.6 204.5 283.8 209.3 C277.0 214.1 270.4 219.2 263.5 223.9 C256.6 228.6 246.0 235.2 242.5 237.4"},"v":{"d":"M376.7 48.9 C380.6 53.1 398.2 63.6 400.4 73.7 C402.7 83.9 395.4 98.6 390.4 110.0 C385.3 121.3 377.6 131.9 370.1 142.1 C362.5 152.2 353.7 161.4 345.2 170.8 C336.7 180.2 327.9 189.4 319.1 198.5 C310.4 207.6 302.0 217.4 292.5 225.6 C283.0 233.9 272.2 240.5 262.1 248.0 C251.9 255.6 242.3 263.9 231.9 271.1 C221.5 278.3 204.9 287.7 199.6 291.1"},"ch":{"d":"M348.8 101.8 L251.2 238.2"},"j":{"d":"M377.2 43.2 C374.5 48.0 366.4 62.4 361.0 72.0 C355.5 81.5 350.3 91.2 344.4 100.5 C338.5 109.8 331.7 118.5 325.7 127.7 C319.7 136.9 314.1 146.4 308.3 155.7 C302.4 165.1 296.5 174.3 290.7 183.7 C284.9 193.0 279.1 202.3 273.5 211.8 C268.0 221.3 263.2 231.2 257.6 240.7 C252.0 250.1 245.8 259.2 240.0 268.6 C234.2 277.9 225.7 292.1 222.8 296.8"},"ls":{"d":"M320.3 145.6 C316.8 147.3 305.6 151.3 299.4 155.7 C293.2 160.1 286.5 165.5 283.2 172.0 C279.9 178.4 280.3 190.6 279.7 194.4"},"rs":{"d":"M319.5 155.4 C317.8 157.6 313.2 164.6 309.3 168.4 C305.3 172.2 300.6 175.6 295.8 178.3 C291.1 181.0 283.1 183.6 280.5 184.6"},"sh":{"d":"M323.6 141.6 L276.4 198.4"},"o":{"d":"M294.4 155.3 C291.7 159.3 276.9 174.2 278.0 179.1 C279.0 184.1 293.5 187.4 300.9 184.7 C308.2 182.1 318.5 167.0 322.0 163.4"},"a":{"d":"M300 126.8 A43.2 43.2 0 1 0 300 213.2 A43.2 43.2 0 1 0 300 126.8"},"e":{"d":"M300 157.3 A12.7 12.7 0 1 0 300 182.7 A12.7 12.7 0 1 0 300 157.3"}};
 let OVR={};const ld=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))||f}catch(e){return f}},sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-OVR=ld('gt2o',{});let P=ld('gt2',{i:{},d:{}});const save=()=>sv('gt2',P);
-fetch('shapes.json').then(r=>r.ok?r.json():{}).then(j=>{OVR={...j,...ld('gt2o',{})}}).catch(()=>{});
+OVR={...BUILTIN,...ld('gt2o',{})};let P=ld('gt2',{i:{},d:{}});P.d=P.d||{};P.i=P.i||{};const save=()=>sv('gt2',P);
+fetch('shapes.json').then(r=>r.ok?r.json():{}).then(j=>{OVR={...BUILTIN,...j,...ld('gt2o',{})}}).catch(()=>{});
 const D=it=>(OVR[it.id]||it).d,mix=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
 /* ---------- spaced repetition (Leitner boxes, 0–5) ---------- */
 const IV=[0,1,3,7,16,35].map(d=>d*864e5);
@@ -68,35 +80,51 @@ function upd(id,ok,h){const r=P.i[id]||(P.i[id]={box:0,due:0});if(ok&&!h)r.box=M
 const learned=()=>Object.keys(P.i),dueIds=()=>learned().filter(x=>P.i[x].due<=Date.now()).sort((a,b)=>P.i[a].due-P.i[b].due);
 const A=document.getElementById('app');let Q=[],qi=0,se={},strokes=[],cv,cx,pen=false,cur=null,hint=0,locked=0;
 
-/* ---------- map ---------- */
-const open=i=>i==0||P.d[i-1]||P._all;
-function map(){const nd=[[80,400],[250,360],[120,305],[240,255],[150,200],[195,150]],dn=dueIds().length;
-  A.innerHTML=`<h1>Gregg Trail</h1><div class="mut">Every lesson introduces new shapes and brings back old ones.</div>
-  <svg viewBox="0 0 360 440" style="width:100%;max-height:42vh;display:block;margin:6px auto"><polygon points="20,430 200,60 340,430" fill="var(--line)"/>
+/* ---------- course plan (see Gregg Mountain Full Course Plan doc) ---------- */
+const CP=[['Base Camp','Units 1–3',['Writing motion & circles|a,e','Lines n, m, t, d|n,m,t,d','Curves k and g|k,g','Curves r and l|r,l','Dots & punctuation','Circles on single strokes|me,tea,day','First phrases','Vowel groups A and E','Circles between strokes|need,date','Curve combinations','The th signs|th,th2','Blends: ted, ded, det, men, mem','Core brief forms','Phrasing principles','Reading, round trip, Checkpoint']],
+['Downward Strokes','Units 4–6',['ch, j, sh|ch,j,sh','Left s, p, b|ls,p,b','Right s, f, v|rs,f,v','Circles on the new strokes','pr, pl, br, bl','fr, fl & the s rule','s between strokes, ses, plurals','x, shun, past tense','Prefix brief forms & phrases','Reading, round trip, Checkpoint']],
+['Hooks & Small Letters','Units 7–12',['The o-hook|o','o-hook modified','r as a left-motion circle','th joinings','con, com, -ly','Phrasing: t for to, as, able','The oo-hook','oo-hook modified','w','y, ng, nk','en, in, un, em, im, ex','Core brief forms & phrases','Reading, first Sprint, Checkpoint']],
+['Vowel Combinations & Blends','Units 13–17',['Diphthongs','Vowel combinations','Short u and ow omitted','Joined prefixes & suffixes','nt, nd, mt, md & ld','Days & months','jent, pent, def, tive','Core brief forms, reading, Checkpoint']],
+['Beginnings, Endings & R','Units 18–21',['be, de, re, dis, mis','Phrasing: had, was not','ten, den, tem, dem','R after vowels','for, ful, self, age, ture','Reading & Checkpoint']],
+['Omission & Abbreviating','Units 22–27',['Omission of final t','Omission of d; sub, ul, al, less','Brief-form derivatives','Phrasing: words omitted','The abbreviating principle','Vowel omitted before shun','Compound words','Figures','Reading & Checkpoint']],
+['Analogical Forms','Units 28–31',['Disjoined beginnings I','Disjoined beginnings II','Phrasing principles','Joined word-endings','Reading & Checkpoint']],
+['The Summit','Units 32–36 (provisional)',['Review, dictation, speed, self-judged writing']]];
+const RT=['0.8'];
+const CON={'0.0':'Gregg describes circles and curves by motion. <b>Right motion</b> turns clockwise, like clock hands. <b>Left motion</b> turns counterclockwise. You’ll use this rule constantly.','0.3':'r and l are saucers; k and g are arches. Each pair is the other turned upside down, and the long one is about twice the short one.'};
+const CAMPS=CP.map((c,ci)=>({t:c[0],u:c[1],L:c[2].map((x,li)=>{const[t,b]=x.split('|'),n=b?b.split(','):[],key=ci+'.'+li;return{t,new:n,key,rt:RT.includes(key),ok:n.length>0&&n.every(i=>I[i])}})}));
+const ORD=[];CAMPS.forEach(c=>c.L.forEach(l=>l.ok&&ORD.push(l.key)));
+const LK=k=>CAMPS[+k.split('.')[0]].L[+k.split('.')[1]];
+const open=k=>{const i=ORD.indexOf(k);return i>=0&&(!!P._all||i==0||!!P.d[ORD[i-1]])};
+let ex=null;
+const lrow=(l,li)=>{const d=P.d[l.key],o=open(l.key);return`<button class="les ${o||d?'':'lock'}" style="margin-left:16px;width:calc(100% - 16px)" onclick="go('${l.key}')"><span class="sp">${li+1}. ${l.t}${l.new.length?`<br><span class="mut sm">New: ${l.new.join(', ')}</span>`:''}</span><span>${d?'✓':o?'→':l.ok?'🔒':'<span class="mut sm">shapes needed</span>'}</span></button>`};
+function map(){const nd=[[80,408],[255,380],[110,345],[245,310],[125,270],[235,235],[150,200],[205,165]],nx=ORD.find(k=>!P.d[k]),cur=ex!=null?ex:(nx?+nx.split('.')[0]:0),dn=dueIds().length,dc=c=>c.L.filter(l=>P.d[l.key]).length,rd=c=>c.L.filter(l=>l.ok).length;
+  A.innerHTML=`<h1>Gregg Mountain</h1><div class="mut">Strict order, one lesson at a time. Every lesson brings back older shapes.</div>
+  <svg viewBox="0 0 360 440" style="width:100%;max-height:38vh;display:block;margin:6px auto"><polygon points="20,430 200,60 340,430" fill="var(--line)"/>
   <polyline points="${nd.map(n=>n.join(',')).join(' ')} 200,105" fill="none" stroke="var(--mut)" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
-  ${nd.map((n,i)=>`<g onclick="go(${i})"><circle cx="${n[0]}" cy="${n[1]}" r="19" fill="${P.d[i]?'var(--ok)':open(i)?'var(--acc)':'var(--bg)'}" stroke="var(--mut)"/><text x="${n[0]}" y="${n[1]+6}" text-anchor="middle" font-size="17" font-weight="700" fill="${open(i)?'var(--bg)':'var(--mut)'}">${i+1}</text></g>`).join('')}
-  <path d="M200 105V60" stroke="var(--fg)" stroke-width="3"/><path d="M200 60l24 8-24 8z" fill="var(--acc)"/></svg>
+  ${nd.map((n,i)=>{const c=CAMPS[i],f=rd(c)&&dc(c)==rd(c);return`<g onclick="ex=${i};map()"><circle cx="${n[0]}" cy="${n[1]}" r="18" fill="${f?'var(--ok)':i==cur?'var(--acc)':'var(--bg)'}" stroke="var(--mut)"/><text x="${n[0]}" y="${n[1]+6}" text-anchor="middle" font-size="16" font-weight="700" fill="${f||i==cur?'var(--bg)':'var(--mut)'}">${i+1}</text></g>`}).join('')}
+  <path d="M200 105V62" stroke="var(--fg)" stroke-width="3"/><path d="M200 62l24 8-24 8z" fill="var(--acc)"/></svg>
   <button class="p les" onclick="review()" ${learned().length?'':'disabled'}><span class="sp">Daily review<br><span class="sm">${learned().length?dn+' due now · '+learned().length+' shapes learned':'Finish lesson 1 to unlock'}</span></span></button>
-  ${SES.map((s,i)=>`<button class="les ${open(i)?'':'lock'}" onclick="go(${i})"><span class="num">${open(i)?i+1:'🔒'}</span><span class="sp"><b>${s.t}</b><br><span class="mut sm">New: ${s.new.join(', ')}${P.d[i]?' · done':''}</span></span></button>`).join('')}
-  <p class="mut sm"><a href="#" onclick="studio();return false">Trace Studio</a> (build real shapes from manual plates) · <a href="#" onclick="P._all=1;save();map();return false">unlock all</a> · <a href="#" onclick="if(confirm('Reset all progress?')){P={i:{},d:{}};save();map()}return false">reset</a></p>
-  <p class="mut sm">Shapes are drafts until replaced in Trace Studio (${Object.keys(OVR).length}/${Object.keys(I).length} replaced).</p>`}
-/* ---------- sessions ---------- */
-function pool(si){return learned().filter(x=>!SES[si].new.includes(x))}
-function go(si){if(!open(si))return;const s=SES[si],q=[],old=mix(pool(si)).sort((a,b)=>P.i[a].due-P.i[b].due).slice(0,6);
-  s.new.forEach(id=>q.push({k:'L',id},{k:'W',id}));s.new.forEach(id=>q.push({k:'R',id}));
+  ${CAMPS.map((c,ci)=>`<button class="les" onclick="ex=${ci==cur?-1:ci};map()"><span class="num">${ci+1}</span><span class="sp"><b>${c.t}</b><br><span class="mut sm">${c.u} · ${dc(c)}/${c.L.length} lessons · ${rd(c)} playable</span></span><span>${ci==cur?'▾':'▸'}</span></button>${ci==cur?c.L.map(lrow).join(''):''}`).join('')}
+  <p class="mut sm">Lessons marked “shapes needed” open as soon as their shapes exist. <a href="#" onclick="studio();return false">Trace Studio</a> · <a href="#" onclick="P._all=1;save();map();return false">unlock all</a> · <a href="#" onclick="if(confirm('Reset all progress?')){P={i:{},d:{}};save();map()}return false">reset</a></p>
+  <p class="mut sm">${Object.keys(I).filter(i=>BUILTIN[i]).length}/${Object.keys(I).length} shapes come from the Anniversary alphabet chart. Words and the rest are still drafts. Trace Studio can replace any of them.</p>`}
+/* ---------- lessons ---------- */
+function go(k){const l=LK(k);if(!open(k))return;const q=[],old=mix(learned().filter(x=>!l.new.includes(x))).sort((a,b)=>P.i[a].due-P.i[b].due).slice(0,6);
+  if(CON[k])q.push({k:'C',t:CON[k]});
+  l.new.forEach(id=>q.push({k:'L',id},{k:'W',id}));l.new.forEach(id=>q.push({k:'R',id}));
   mix(old).forEach(id=>q.push({k:Math.random()<.5?'R':'W',id}));
-  s.new.forEach(id=>q.push({k:'W',id,late:1}));
-  if(s.rt){const ids=mix([...s.new,...old.filter(x=>I[x].kind=='word')]).slice(0,4);ids.forEach(id=>q.push({k:'TW',id}));mix(ids).forEach(id=>q.push({k:'TR',id}))}
-  run(q,si)}
-function review(){const ids=dueIds().slice(0,10);const extra=mix(learned().filter(x=>!ids.includes(x))).slice(0,Math.max(0,5-ids.length));
+  l.new.forEach(id=>q.push({k:'W',id,late:1}));
+  if(l.rt){const ids=mix([...l.new,...old.filter(x=>I[x].kind=='word')]).slice(0,4);ids.forEach(id=>q.push({k:'TW',id}));mix(ids).forEach(id=>q.push({k:'TR',id}))}
+  run(q,l)}
+function review(){const ids=dueIds().slice(0,10),extra=mix(learned().filter(x=>!ids.includes(x))).slice(0,Math.max(0,5-ids.length));
   run(mix([...ids,...extra]).map(id=>({k:Math.random()<.5?'R':'W',id})),null)}
-function run(q,si){Q=q;qi=0;se={si,img:{}};card()}
-const LBL={L:'Learn · trace it',W:'Write it from memory',R:'Read it',TW:'Round trip · write',TR:'Round trip · read your own writing'};
+function run(q,l){Q=q;qi=0;se={l,key:l&&l.key,img:{}};card()}
+const LBL={C:'Concept',L:'Learn · trace it',W:'Write it from memory',R:'Read it',TW:'Round trip · write',TR:'Round trip · read your own writing'};
 function card(){if(qi>=Q.length)return fin();const c=Q[qi],it=I[c.id];locked=0;hint=0;
   const hd=`<div class="row"><button onclick="map()">✕</button><div class="bar"><i style="width:${qi/Q.length*100}%"></i></div></div><div class="tag" style="margin-top:10px">${LBL[c.k]}</div>`;
-  if(c.k=='R'||c.k=='TR'){const pl=c.k=='TR'?'':'',ds=mix([...new Set([...learned(),...(se.si!=null?SES[se.si].new:[])])].filter(x=>x!=c.id&&I[x].kind==it.kind)).slice(0,3),os=mix([c.id,...ds]);
+  if(c.k=='C'){A.innerHTML=hd+`<div class="tip" style="font-size:19px;margin-top:16px">${c.t}</div><div class="row"><div class="sp"></div><button class="p" onclick="adv()">Got it →</button></div>`;return}
+  if(c.k=='R'||c.k=='TR'){const pl=c.k=='TR'?'':'',ds=mix([...new Set([...learned(),...(se.l?se.l.new:[])])].filter(x=>x!=c.id&&I[x].kind==it.kind)).slice(0,3),os=mix([c.id,...ds]);
     A.innerHTML=hd+`<div class="stage">${c.k=='TR'?`<img src="${se.img[c.id]}" style="opacity:1">`:`<svg viewBox="0 0 600 320"><path d="${D(it)}" fill="none" stroke="var(--fg)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>`}</div>
-    <div class="row">${os.map(o=>`<button class="opt" onclick="pick(this,'${o}')">${o}</button>`).join('')}</div><div id="msg"></div><div class="row" id="ctl"></div>`;return}
+    <div class="row">${os.map(o=>`<button class="opt" data-id="${o}" onclick="pick(this,'${o}')">${I[o].name}</button>`).join('')}</div><div id="msg"></div><div class="row" id="ctl"></div>`;return}
   const l=c.k=='L';
   A.innerHTML=hd+`<div class="row"><span class="big">${it.name}</span><span class="mut">${it.snd}</span></div>
   <div class="stage"><svg viewBox="0 0 600 320"><line x1="30" x2="570" y1="190" y2="190" stroke="var(--line)" stroke-dasharray="4 6"/><g id="gg">
@@ -146,13 +174,13 @@ function check(){const c=Q[qi],it=I[c.id],r=score(it);if(!r){document.getElement
   document.getElementById('ctl').innerHTML='<div class="sp"></div><button class="p" onclick="adv()">Next →</button>'}
 function twDone(){const c=Q[qi];if(strokes.flat().length<5){document.getElementById('msg').innerHTML='<div class="tip">Write the word first.</div>';return}se.img[c.id]=cv.toDataURL();adv()}
 function pick(b,o){const c=Q[qi];if(locked)return;locked=1;const ok=o==c.id;if(c.k=='R')upd(c.id,ok,0);else if(!ok){}
-  document.querySelectorAll('.opt').forEach(x=>{if(x.textContent==c.id)x.classList.add('ok')});if(!ok)b.classList.add('no');
+  document.querySelectorAll('.opt').forEach(x=>{if(x.dataset.id==c.id)x.classList.add('ok')});if(!ok)b.classList.add('no');
   if(c.k=='TR'&&!ok){document.getElementById('msg').innerHTML=`<div class="tip">That was “${c.id}”. Compare with the model: <svg viewBox="0 0 600 320" style="width:100%;max-height:120px"><path d="${D(I[c.id])}" fill="none" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/></svg></div>`}
   else document.getElementById('msg').innerHTML=`<div class="tip">${ok?'Correct.':'It was “'+c.id+'”. It will come back soon.'}</div>`;
   if(!ok&&c.k=='R'&&!c.retry)Q.push({...c,retry:1});
   document.getElementById('ctl').innerHTML='<div class="sp"></div><button class="p" onclick="adv()">Next →</button>'}
-function fin(){if(se.si!=null){P.d[se.si]=1;save()}const ids=[...new Set(Q.map(c=>c.id))];
-  A.innerHTML=`<h1>Session complete 🏔️</h1><p class="mut">Shapes you worked on:</p><div class="row">${ids.map(x=>`<div class="tip" style="text-align:center;min-width:90px"><div class="big">${x}</div><span class="mut sm">box ${P.i[x]?P.i[x].box:0}/5</span></div>`).join('')}</div><button class="p" onclick="map()">Back to the trail →</button>`}
+function fin(){if(se.key){P.d[se.key]=1;save()}const ids=[...new Set(Q.map(c=>c.id))];
+  A.innerHTML=`<h1>Session complete 🏔️</h1><p class="mut">Shapes you worked on:</p><div class="row">${ids.map(x=>`<div class="tip" style="text-align:center;min-width:90px"><div class="big">${x}</div><span class="mut sm">box ${P.i[x]?P.i[x].box:0}/5</span></div>`).join('')}</div><button class="p" onclick="map()">Back to the mountain →</button>`}
 /* ---------- Trace Studio: author shapes from reference plates ---------- */
 function studio(){A.innerHTML=`<div class="row"><button onclick="map()">← Map</button><b>Trace Studio</b></div>
   <p class="mut sm">Open a plate from the Anniversary manual (e.g. screenshot from greggshorthand.github.io), load it here, then trace one shape. Keep the zoom identical for every shape so sizes stay in proportion.</p>
